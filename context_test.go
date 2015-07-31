@@ -32,7 +32,7 @@ func TestContext(t *testing.T) {
 
 	req, _ := http.NewRequest(POST, "/", strings.NewReader(userJSON))
 	rec := httptest.NewRecorder()
-	c := NewContext(req, NewResponse(rec), New())
+	c := NewContext(req, NewResponse(rec), New()).(*context)
 
 	// Request
 	assert.NotNil(t, c.Request())
@@ -90,7 +90,7 @@ func TestContext(t *testing.T) {
 	// JSON
 	req.Header.Set(Accept, ApplicationJSON)
 	rec = httptest.NewRecorder()
-	c = NewContext(req, NewResponse(rec), New())
+	c = NewContext(req, NewResponse(rec), New()).(*context)
 	err = c.JSON(http.StatusOK, user{"1", "Joe"})
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
@@ -101,7 +101,7 @@ func TestContext(t *testing.T) {
 	// JSONP
 	req.Header.Set(Accept, ApplicationJavaScript)
 	rec = httptest.NewRecorder()
-	c = NewContext(req, NewResponse(rec), New())
+	c = NewContext(req, NewResponse(rec), New()).(*context)
 	callback := "callback"
 	err = c.JSONP(http.StatusOK, callback, user{"1", "Joe"})
 	if assert.NoError(t, err) {
@@ -113,7 +113,7 @@ func TestContext(t *testing.T) {
 	// XML
 	req.Header.Set(Accept, ApplicationXML)
 	rec = httptest.NewRecorder()
-	c = NewContext(req, NewResponse(rec), New())
+	c = NewContext(req, NewResponse(rec), New()).(*context)
 	err = c.XML(http.StatusOK, user{"1", "Joe"})
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
@@ -124,7 +124,7 @@ func TestContext(t *testing.T) {
 	// String
 	req.Header.Set(Accept, TextPlain)
 	rec = httptest.NewRecorder()
-	c = NewContext(req, NewResponse(rec), New())
+	c = NewContext(req, NewResponse(rec), New()).(*context)
 	err = c.String(http.StatusOK, "Hello, World!")
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
@@ -135,7 +135,7 @@ func TestContext(t *testing.T) {
 	// HTML
 	req.Header.Set(Accept, TextHTML)
 	rec = httptest.NewRecorder()
-	c = NewContext(req, NewResponse(rec), New())
+	c = NewContext(req, NewResponse(rec), New()).(*context)
 	err = c.HTML(http.StatusOK, "Hello, <strong>World!</strong>")
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
@@ -145,23 +145,23 @@ func TestContext(t *testing.T) {
 
 	// NoContent
 	rec = httptest.NewRecorder()
-	c = NewContext(req, NewResponse(rec), New())
+	c = NewContext(req, NewResponse(rec), New()).(*context)
 	c.NoContent(http.StatusOK)
-	assert.Equal(t, http.StatusOK, c.response.status)
+	assert.Equal(t, http.StatusOK, c.Response().status)
 
 	// Redirect
 	rec = httptest.NewRecorder()
-	c = NewContext(req, NewResponse(rec), New())
+	c = NewContext(req, NewResponse(rec), New()).(*context)
 	assert.Equal(t, nil, c.Redirect(http.StatusMovedPermanently, "http://labstack.github.io/echo"))
 
 	// Error
 	rec = httptest.NewRecorder()
-	c = NewContext(req, NewResponse(rec), New())
+	c = NewContext(req, NewResponse(rec), New()).(*context)
 	c.Error(errors.New("error"))
 	assert.Equal(t, http.StatusInternalServerError, c.response.status)
 
 	// reset
-	c.reset(req, NewResponse(httptest.NewRecorder()), New())
+	c.Reset(req, NewResponse(httptest.NewRecorder()), New())
 }
 
 func TestContextQuery(t *testing.T) {
@@ -173,7 +173,7 @@ func TestContextQuery(t *testing.T) {
 	assert.NoError(t, err)
 	req.URL.RawQuery = q.Encode()
 
-	c := NewContext(req, nil, New())
+	c := NewContext(req, nil, New()).(*context)
 	assert.Equal(t, "joe", c.Query("name"))
 	assert.Equal(t, "joe@labstack.com", c.Query("email"))
 
@@ -188,13 +188,13 @@ func TestContextForm(t *testing.T) {
 	assert.NoError(t, err)
 	req.Header.Add(ContentType, ApplicationForm)
 
-	c := NewContext(req, nil, New())
+	c := NewContext(req, nil, New()).(*context)
 	assert.Equal(t, "joe", c.Form("name"))
 	assert.Equal(t, "joe@labstack.com", c.Form("email"))
 }
 
-func testBind(t *testing.T, c *Context, ct string) {
-	c.request.Header.Set(ContentType, ct)
+func testBind(t *testing.T, c Context, ct string) {
+	c.Request().Header.Set(ContentType, ct)
 	u := new(user)
 	err := c.Bind(u)
 	if ct == "" {

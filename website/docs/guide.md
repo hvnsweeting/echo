@@ -62,12 +62,12 @@ code below registers a route for method `GET`, path `/hello` and a handler which
 `Hello!` HTTP response.
 
 ```go
-e.Get("/hello", func(c *echo.Context) error {
+e.Get("/hello", func(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello!")
 })
 ```
 
-Echo's default handler is `func(*echo.Context) error` where `echo.Context` primarily
+Echo's default handler is `func(echo.Context) error` where `echo.Context` primarily
 holds HTTP request and response objects. Echo also has a support for other types
 of handlers.
 
@@ -90,15 +90,15 @@ match:
 #### Example
 
 ```go
-e.Get("/users/:id", func(c *echo.Context) error {
+e.Get("/users/:id", func(c echo.Context) error {
 	return c.String(http.StatusOK, "/users/:id")
 })
 
-e.Get("/users/new", func(c *echo.Context) error {
+e.Get("/users/new", func(c echo.Context) error {
 	return c.String(http.StatusOK, "/users/new")
 })
 
-e.Get("/users/1/files/*", func(c *echo.Context) error {
+e.Get("/users/1/files/*", func(c echo.Context) error {
 	return c.String(http.StatusOK, "/users/1/files/*")
 })
 ```
@@ -143,7 +143,7 @@ application.
 
 ```go
 // Handler
-h := func(c *echo.Context) error {
+h := func(c echo.Context) error {
 	return c.String(http.StatusOK, "OK")
 }
 
@@ -233,7 +233,7 @@ better performance.
 *Example*
 
 ```go
-e.Get("/users/:name", func(c *echo.Context) error {
+e.Get("/users/:name", func(c echo.Context) error {
 	// By name
 	name := c.Param("name")
 
@@ -255,7 +255,7 @@ Query parameter can be retrieved by name using `Context.Query(name string)`.
 *Example*
 
 ```go
-e.Get("/users", func(c *echo.Context) error {
+e.Get("/users", func(c echo.Context) error {
 	name := c.Query("name")
 	return c.String(http.StatusOK, name)
 })
@@ -272,7 +272,7 @@ Form parameter can be retrieved by name using `Context.Form(name string)`.
 *Example*
 
 ```go
-e.Post("/users", func(c *echo.Context) error {
+e.Post("/users", func(c echo.Context) error {
 	name := c.Form("name")
 	return c.String(http.StatusOK, name)
 })
@@ -331,7 +331,7 @@ Template `public/views/hello.html`
 Handler
 
 ```go
-func Hello(c *echo.Context) error {
+func Hello(c echo.Context) error {
 	return c.Render(http.StatusOK, "hello", "World")
 }
 ```
@@ -429,7 +429,7 @@ import (
 
 func main() {
 	e := echo.New()
-	e.Use(func(c *echo.Context) error {
+	e.Use(func(c echo.Context) error {
 		// Extract the credentials from HTTP request header and perform a security
 		// check
 
@@ -440,7 +440,7 @@ func main() {
 	e.Run(":1323")
 }
 
-func welcome(c *echo.Context) error {
+func welcome(c echo.Context) error {
 	return c.String(http.StatusOK, "Welcome!")
 }
 ```

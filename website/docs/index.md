@@ -11,14 +11,14 @@ A fast and unfancy micro web framework for Golang.
 	- `echo.MiddlewareFunc`
 	- `func(echo.HandlerFunc) echo.HandlerFunc`
 	- `echo.HandlerFunc`
-	- `func(*echo.Context) error`
+	- `func(echo.Context) error`
 	- `func(http.Handler) http.Handler`
 	- `http.Handler`
 	- `http.HandlerFunc`
 	- `func(http.ResponseWriter, *http.Request)`
 - Extensible handler, supports:
     - `echo.HandlerFunc`
-    - `func(*echo.Context) error`
+    - `func(echo.Context) error`
     - `http.Handler`
     - `http.HandlerFunc`
     - `func(http.ResponseWriter, *http.Request)`
@@ -69,7 +69,7 @@ import (
 )
 
 // Handler
-func hello(c *echo.Context) error {
+func hello(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello, World!\n")
 }
 
